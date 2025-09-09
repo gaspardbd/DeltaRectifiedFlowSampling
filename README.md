@@ -1,7 +1,7 @@
 ## Delta Velocity Rectified Flow (DVRF)
 
 Official implementation of the paper: "Delta Velocity Rectified Flow for Text-to-Image Editing".  
-ArXiv: [add link here]
+ArXiv: [https://arxiv.org/abs/2509.05342]
 
 ### Overview
 DVRF is a text-guided image editing method that optimizes the latent of a pre-trained diffusion model (SD3 / SD3.5) using a rectified-flow objective on the delta of predicted velocities between a source and a target prompt. It provides high-fidelity, localized edits while preserving the structure of the source image.

@@ -117,11 +117,14 @@ Outputs are saved under `outputs/<exp_name>/<model_type>/src_<image_name>/tgt_<i
 ### Citation
 If you use this code, please cite our paper:
 ```bibtex
-@article{beaudouin2025dvrf,
-  title={Delta Velocity Rectified Flow for Text-to-Image Editing},
-  author={Gaspard Beaudouin, Minghan Li, Jaeyeon Kim, Sunghoon Yoon, Mengyu Wang},
-  journal={arXiv preprint arXiv:xxxx.xxxxx},
-  year={2025}
+@misc{beaudouin2025deltavelocityrectifiedflow,
+      title={Delta Velocity Rectified Flow for Text-to-Image Editing}, 
+      author={Gaspard Beaudouin and Minghan Li and Jaeyeon Kim and Sung-Hoon Yoon and Mengyu Wang},
+      year={2025},
+      eprint={2509.05342},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2509.05342}, 
 }
 ```
 

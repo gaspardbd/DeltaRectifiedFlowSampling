@@ -5,7 +5,7 @@ outputs/
 .DS_Store
 .env
 .venv/
-dvrf_env/
+drfs_env/
 .idea/
 .vscode/
 *.egg-info/

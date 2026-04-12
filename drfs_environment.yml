@@ -1,4 +1,4 @@
-name: dvrf_env
+name: drfs_env
 channels:
   - defaults
   - https://repo.anaconda.com/pkgs/main
@@ -88,4 +88,3 @@ dependencies:
       - urllib3==2.2.3
       - wcwidth==0.2.13
       - zipp==3.20.2
-prefix: /shared/ssd_30T/gaspard/anaconda3/envs/flowedit

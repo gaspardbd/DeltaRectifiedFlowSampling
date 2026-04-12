@@ -1,103 +1,74 @@
-## Delta Velocity Rectified Flow (DVRF)
+# Delta Rectified Flow Sampling (DRFS)
 
-Official implementation of the paper: "Delta Velocity Rectified Flow for Text-to-Image Editing".  
-ArXiv: [https://arxiv.org/abs/2509.05342]
+### [Paper](https://arxiv.org/abs/2509.05342) | CVPR 2026
 
-### Overview
-DVRF is a text-guided image editing method that optimizes the latent of a pre-trained diffusion model (SD3 / SD3.5) using a rectified-flow objective on the delta of predicted velocities between a source and a target prompt. It provides high-fidelity, localized edits while preserving the structure of the source image.
+Official implementation of **"Delta Rectified Flow Sampling for Text-to-Image Editing"** (CVPR 2026).
 
-- **Models**: Stable Diffusion 3 (SD3), Stable Diffusion 3.5 (`medium`, `large`, `large-turbo`)
-- **Pipelines**: Diffusers pipelines (Hugging Face)
-- **Input**: Source image + source prompt + target prompt(s)
-- **Output**: Edited image and optimization trajectory frames
+> **Delta Rectified Flow Sampling for Text-to-Image Editing**  
+> [Gaspard Beaudouin](https://scholar.google.com/citations?user=PLACEHOLDER), [Minghan Li](https://scholar.google.com/citations?user=PLACEHOLDER), [Jaeyeon Kim](https://scholar.google.com/citations?user=PLACEHOLDER), [Sung-Hoon Yoon](https://scholar.google.com/citations?user=PLACEHOLDER), [Mengyu Wang](https://scholar.google.com/citations?user=PLACEHOLDER)
 
 ---
 
-### Repository Structure
-```
-DeltaVelocityRectifiedFlow/
-├── assets/                     # Paper figures and results
-│   ├── DVRF.png               # Method schematic
-│   ├── DVRF_results.png       # Qualitative results
-│   ├── DVRF_comparaison.png   # Comparison results 1
-│   └── DVRF_comparaison2.png  # Comparison results 2
-├── images/                     # Example images and dataset config
-│   ├── mapping_file.yaml      # Dataset configuration
-│   ├── a_cat_sitting_on_a_table.png
-│   ├── city-street.jpg
-│   ├── fallow-deer.jpg
-│   ├── ...
-├── models/                     # Core DVRF implementation
-│   ├── __init__.py
-│   └── DVRF.py                # Main DVRF algorithm
-├── edit.py                     # Main script for running experiments
-├── exp.yaml                    # Experiment configuration
-├── dvrf_environment.yml        # Conda environment
-├── .gitignore                  # Git ignore rules
-└── README.md                   # This file
-```
+### Overview
+
+DRFS is a text-guided image editing method that optimizes the latent representation of a pre-trained rectified-flow model (SD3 / SD3.5) by matching the delta between source and target velocity predictions. Inspired by Delta Denoising Score for diffusion models, DRFS introduces a trajectory-driven editing objective that operates in the velocity space of rectified flows, together with a progressive shift term for improved editing performance. DRFS achieves state-of-the-art results on the PIE Benchmark while preserving the structure of the source image.
+
+- **Models**: Stable Diffusion 3 (SD3), Stable Diffusion 3.5 (`medium`, `large`, `large-turbo`)
+- **Pipelines**: Hugging Face Diffusers
+- **Input**: Source image + source prompt + target prompt(s)
+- **Output**: Edited image
 
 ---
 
 ### Method
 
-The DVRF objective optimizes the latent by aligning the target velocity with the source velocity, inspired by the Dela Denoising Score for diffusions models. We further introduce a shift term to improve editing performance, and propose Delta Velocity Rectified Flow (DVRF), a trajectory-driven editing objective that operates in the velocity space of rectified flows. DVRF obtains state-of-the-art results on the PIE Benchmark. See the method schematic:
-
-![DVRF Method](assets/DVRF.png)
+![DRFS Method](assets/DRFS.png)
 
 ---
 
 ### Results
 
-Selected qualitative results demonstrating localized edits and structure preservation:
+![DRFS Results](assets/DRFS_results.png)
 
-![DVRF Results](assets/DVRF_results.png)
+![DRFS Comparison 1](assets/DRFS_comparaison.png)
 
-Additional comparisons:
-
-![DVRF Comparison 1](assets/DVRF_comparaison.png)
-
-![DVRF Comparison 2](assets/DVRF_comparaison2.png)
+![DRFS Comparison 2](assets/DRFS_comparaison2.png)
 
 ---
 
 ### Installation
 
-Clone the repo:
 ```bash
-git clone https://github.com/gaspardbd/DeltaVelocityRectifiedFlow.git
-cd DeltaVelocityRectifiedFlow
+git clone https://github.com/Harvard-AI-and-Robotics-Lab/DeltaRectifiedFlowSampling.git
+cd DeltaRectifiedFlowSampling
+conda env create -f drfs_environment.yml
+conda activate drfs_env
 ```
-
-Create the conda environment :
-```bash
-conda env create -f dvrf_environment.yml
-conda activate dvrf_env
-```
-
 
 ---
 
 ### Quick Start
 
-1) Configure your experiment in `exp.yaml`:
+1. Configure your experiment in `exp.yaml`:
+
 ```yaml
-- exp_name: "DVRF_SD3"
+- exp_name: "DRFS_SD3"
   dataset_yaml: images/mapping_file.yaml
-  model_type: "SD3"        # or "SD3.5", "SD3.5-medium", "SD3.5-large", "SD3.5-large-turbo"
-  T_steps: 50               # diffusion timesteps
-  B: 1                      # batch size for averaging the gradient
+  model_type: "SD3"              # SD3, SD3.5, SD3.5-medium, SD3.5-large, SD3.5-large-turbo
+  T_steps: 50                    # diffusion timesteps
+  B: 1                           # batch size for averaging the gradient
   src_guidance_scale: 6
   tgt_guidance_scale: 16.5
-  num_steps: 50             # optimization steps
+  num_steps: 50                  # number of optimization steps
   seed: 41
-  eta: 1.0                  # progressive c_t = k/T * t  described in the paper
-  scheduler_strategy: "descending"   # "random" or "descending"
-  lr: "custom"             # or a float, e.g. 0.02
-  optimizer: "SGD"         # SGD, Adam, AdamW, RMSprop, SGD_Nesterov
+  eta: 1.0                       # progressive c_t = k/T · t (see paper)
+  scheduler_strategy: "descending"  # "random" or "descending"
+  lr: "custom"                   # adaptive lr from the paper, or a constant float
+  optimizer: "SGD"               # SGD, Adam, AdamW, RMSprop, SGD_Nesterov
 ```
 
-2) Prepare `images/mapping_file.yaml` with your images and prompts:
+2. Prepare `images/mapping_file.yaml` with your images and prompts:
+
 ```yaml
 - input_img: images/a_cat_sitting_on_a_table.png
   source_prompt: A cat sitting on a table.
@@ -105,36 +76,55 @@ conda activate dvrf_env
     - A lion sitting on a table.
 ```
 
-3) Run editing:
+3. Run editing:
+
 ```bash
 python edit.py --exp_yaml exp.yaml
 ```
 
-Outputs are saved under `outputs/<exp_name>/<model_type>/src_<image_name>/tgt_<index>/` including the side-by-side image and trajectory frames.
+Results are saved to `outputs/<exp_name>/<model_type>/src_<image>/tgt_<index>/`.
+
+---
+
+### Repository Structure
+
+```
+DeltaRectifiedFlowSampling/
+├── assets/                     # Paper figures
+├── images/                     # Example images and dataset config
+│   └── mapping_file.yaml
+├── models/
+│   ├── __init__.py
+│   └── DRFS.py                 # Core DRFS algorithm
+├── edit.py                     # Main entry point
+├── exp.yaml                    # Experiment configuration
+├── drfs_environment.yml        # Conda environment
+└── README.md
+```
 
 ---
 
 ### Citation
-If you use this code, please cite our paper:
+
+If you find this work useful, please cite:
+
 ```bibtex
-@misc{beaudouin2025deltavelocityrectifiedflow,
-      title={Delta Velocity Rectified Flow for Text-to-Image Editing}, 
-      author={Gaspard Beaudouin and Minghan Li and Jaeyeon Kim and Sung-Hoon Yoon and Mengyu Wang},
-      year={2025},
-      eprint={2509.05342},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV},
-      url={https://arxiv.org/abs/2509.05342}, 
+@inproceedings{beaudouin2026drfs,
+  title     = {Delta Rectified Flow Sampling for Text-to-Image Editing},
+  author    = {Beaudouin, Gaspard and Li, Minghan and Kim, Jaeyeon and Yoon, Sung-Hoon and Wang, Mengyu},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2026}
 }
 ```
 
 ---
 
 ### License
-http://creativecommons.org/licenses/by/4.0/
+
+This work is licensed under a [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
 
 ---
 
 ### Acknowledgements
-- Built on top of Hugging Face Diffusers pipelines and Stable Diffusion 3/3.5.
-- Thanks to the research community for open-source models and tooling.
+
+Built on [Hugging Face Diffusers](https://github.com/huggingface/diffusers) and Stable Diffusion 3 / 3.5. Thanks to the open-source community.

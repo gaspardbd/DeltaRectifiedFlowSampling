@@ -109,11 +109,13 @@ DeltaRectifiedFlowSampling/
 If you find this work useful, please cite:
 
 ```bibtex
-@inproceedings{beaudouin2026drfs,
-  title     = {Delta Rectified Flow Sampling for Text-to-Image Editing},
-  author    = {Beaudouin, Gaspard and Li, Minghan and Kim, Jaeyeon and Yoon, Sung-Hoon and Wang, Mengyu},
-  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
-  year      = {2026}
+@InProceedings{Beaudouin_2026_CVPR,
+    author    = {Beaudouin, Gaspard and Li, Minghan and Kim, Jaeyeon and Yoon, Sung-Hoon and Wang, Mengyu},
+    title     = {Delta Rectified Flow Sampling for Text-to-Image Editing},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+    month     = {June},
+    year      = {2026},
+    pages     = {18662-18672}
 }
 ```
 
